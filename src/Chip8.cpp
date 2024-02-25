@@ -188,84 +188,154 @@ void Chip8::OP_8xy3(){
 
 // ADD Vx, Vy (Set Vx = Vx + Vy, set VF = carry)
 void Chip8::OP_8xy4(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
+    uint16_t sum = registers[Vx] + registers[Vy];
+
+    if(sum > 255U) {
+        registers[0xF] = 1;
+    } else {
+        registers[0xF] = 0;
+    }
+
+    registers[Vx] = sum & 0xFFu;
 }
+
 // SUB Vx, Vy (Set Vx = Vx - Vy, set VF = NOT borrow)
 void Chip8::OP_8xy5(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
+    if(registers[Vx] > registers[Vy]) {
+        registers[0xF] = 1;
+    } else {
+        registers[0xF] = 0;
+    }
+
+    registers[Vx] -= registers[Vy];
 }
+
 // SHR Vx {, Vy} (Set Vx = Vx SHR 1)
 void Chip8::OP_8xy6(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    registers[0xF] = (registers[Vx] & 0x1u);
 
+    registers[Vx] >>= 1;
 }
+
 // SUBN Vx, Vy (Set Vx = Vy - Vx, set VF = NOT borrow)
 void Chip8::OP_8xy7(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    if(registers[Vy] > registers[Vx]) {
+        registers[0xF] = 1;
+    } else {
+        registers[0xF] = 0;
+    }
+
+    registers[Vx] = registers[Vy] - registers[Vx];
 
 }
+
 // SHL Vx {, Vy} (Set Vx = Vx SHL 1)
 void Chip8::OP_8xyE(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    registers[0xF] = (registers[Vx] & 0x80u) >> 7u;
 
+    registers[Vx] <<= 1;
 }
+
 // SNE Vx, Vy (Skip next instruction if Vx != Vy)
 void Chip8::OP_9xy0(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
+    if(registers[Vx] != registers[Vy]) {
+        pc += 2;
+    }
 }
+
 // LD I, addr (Set I = nnn)
 void Chip8::OP_Annn(){
 
+    // Makes sure it is unsigned 16-bits
+    uint16_t address = opcode * 0x0FFFu;
+    
+    index = address;
 }
+
 // JP V0, addr (Jump to location nnn + V0)
 void Chip8::OP_Bnnn(){
+    uint16_t address = (opcode * 0x0FFFu) + registers[0x00u];
 
+    pc = address;
 }
+
 // RND Vx, byte (Set Vx = random byte AND kk)
 void Chip8::OP_Cxkk(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t byte = opcode & 0x00FFu;
 
+    registers[Vx] = randByte(randGen) & byte;
 }
+
 // DRW Vx, Vy, nibble (Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision)
 void Chip8::OP_Dxyn(){
-
+    
 }
+
 // SKP Vx (Skip next instruction if key with the value of Vx is pressed)
 void Chip8::OP_Ex9E(){
 
 }
+
 // SKNP Vx (Skip next instruction if key with the value of Vx is not pressed)
 void Chip8::OP_ExA1(){
 
 }
+
 // LD Vx, DT (Set Vx = delay timer value)
 void Chip8::OP_Fx07(){
 
 }
+
 // LD Vx, K (Wait for a key press, store the value of the key in Vx)
 void Chip8::OP_Fx0A(){
 
 }
+
 // LD DT, Vx (Set delay timer = Vx)
 void Chip8::OP_Fx15(){
 
 }
+
 // LD ST, Vx (Set sound timer = Vx)
 void Chip8::OP_Fx18(){
 
 }
+
 // ADD I, Vx (Set I = I + Vx)
 void Chip8::OP_Fx1E(){
 
 }
+
 // LD F, Vx (Set I = location of sprite for digit Vx)
 void Chip8::OP_Fx29(){
 
 }
+
 // LD B, Vx (Store BCD representation of Vx in memory locations I, I+1, and I+2)
 void Chip8::OP_Fx33(){
 
 }
+
 // LD [I], Vx (Store registers V0 through Vx in memory starting at location I)
 void Chip8::OP_Fx55(){
 
 }
+
 // LD Vx, [I] (Read registers V0 through Vx from memory starting at location I)
 void Chip8::OP_Fx65(){
 

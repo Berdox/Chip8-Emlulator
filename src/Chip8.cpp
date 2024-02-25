@@ -67,3 +67,149 @@ void Chip8::LoadROM(char const* filename) {
         delete[] buffer;
     }
 }
+
+// Does nothing
+void Chip8::OP_NULL(){
+    
+}
+
+// CLS (Clear display)
+void Chip8::OP_00E0(){
+    
+}
+// RET (return from subroutine)
+void Chip8::OP_00EE(){
+    
+}
+// SYS addr (jump to machine code at nnn)
+void Chip8::OP_0nnn(){
+    
+}
+// JP (jump to location nnn)
+void Chip8::OP_1nnn(){
+    
+} 
+// CALL addr (call subroutine at nnn)
+void Chip8::OP_2nnn(){
+    
+}
+// SE Vx, byte (skip next instruction if Vx = kk)
+void Chip8::OP_3xkk(){
+    
+}
+// SNE Vx, byte (Skip next instruction if Vx != kk)
+void Chip8::OP_4xkk(){
+    
+}
+// SE Vx, Vy (Skip next instruction if Vx = Vy)
+void Chip8::OP_5xy0(){
+    
+}
+// LD Vx, byte (Set Vx = kk)
+void Chip8::OP_6xkk(){
+    
+}
+// ADD Vx, byte (Set Vx = Vx + kk)
+void Chip8::OP_7xkk(){
+    
+}
+// LD Vx, Vy (Set Vx = Vy)
+void Chip8::OP_8xy0(){
+    
+}
+// OR Vx, Vy (Set Vx = Vx OR Vy)
+void Chip8::OP_8xy1(){
+    
+}
+// AND Vx, Vy (Set Vx = Vx AND Vy)
+void Chip8::OP_8xy2(){
+    
+}
+// XOR Vx, Vy (Set Vx = Vx XOR Vy)
+void Chip8::OP_8xy3(){
+    
+}
+// ADD Vx, Vy (Set Vx = Vx + Vy, set VF = carry)
+void Chip8::OP_8xy4(){
+    
+}
+// SUB Vx, Vy (Set Vx = Vx - Vy, set VF = NOT borrow)
+void Chip8::OP_8xy5(){
+    
+}
+// SHR Vx {, Vy} (Set Vx = Vx SHR 1)
+void Chip8::OP_8xy6(){
+    
+}
+// SUBN Vx, Vy (Set Vx = Vy - Vx, set VF = NOT borrow)
+void Chip8::OP_8xy7(){
+    
+}
+// SHL Vx {, Vy} (Set Vx = Vx SHL 1)
+void Chip8::OP_8xyE(){
+    
+}
+// SNE Vx, Vy (Skip next instruction if Vx != Vy)
+void Chip8::OP_9xy0(){
+    
+}
+// LD I, addr (Set I = nnn)
+void Chip8::OP_Annn(){
+    
+}
+// JP V0, addr (Jump to location nnn + V0)
+void Chip8::OP_Bnnn(){
+    
+}
+// RND Vx, byte (Set Vx = random byte AND kk)
+void Chip8::OP_Cxkk(){
+    
+}
+// DRW Vx, Vy, nibble (Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision)
+void Chip8::OP_Dxyn(){
+    
+}
+// SKP Vx (Skip next instruction if key with the value of Vx is pressed)
+void Chip8::OP_Ex9E(){
+    
+}
+// SKNP Vx (Skip next instruction if key with the value of Vx is not pressed)
+void Chip8::OP_ExA1(){
+    
+}
+// LD Vx, DT (Set Vx = delay timer value)
+void Chip8::OP_Fx07(){
+    
+}
+// LD Vx, K (Wait for a key press, store the value of the key in Vx)
+void Chip8::OP_Fx0A(){
+    
+}
+// LD DT, Vx (Set delay timer = Vx)
+void Chip8::OP_Fx15(){
+    
+}
+// LD ST, Vx (Set sound timer = Vx)
+void Chip8::OP_Fx18(){
+    
+}
+// ADD I, Vx (Set I = I + Vx)
+void Chip8::OP_Fx1E(){
+    
+}
+// LD F, Vx (Set I = location of sprite for digit Vx)
+void Chip8::OP_Fx29(){
+    
+}
+// LD B, Vx (Store BCD representation of Vx in memory locations I, I+1, and I+2)
+void Chip8::OP_Fx33(){
+    
+}
+// LD [I], Vx (Store registers V0 through Vx in memory starting at location I)
+void Chip8::OP_Fx55(){
+    
+}
+// LD Vx, [I] (Read registers V0 through Vx from memory starting at location I)
+void Chip8::OP_Fx65(){
+    
+}

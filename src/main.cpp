@@ -1,7 +1,8 @@
 #include "../include/Chip8.hpp"
-//#include "../include/Platform.hpp"
-//#include <chrono>
+#include "../include/Platform.hpp"
+#include <chrono>
 #include <iostream>
+#include <SDL2/SDL.h>
 
 
 int main(int argc, char** argv)
@@ -37,13 +38,13 @@ int main(int argc, char** argv)
 		{
 			lastCycleTime = currentTime;
 
-			chip8.Cycle();
+			chip8.Cycles();
 
 			platform.Update(chip8.video, videoPitch);
 		}
 	}*/
 
-	Chip8 c;
+	SDL_Log("Hello SDL");
 
 	std::cout << "heel\n";
 

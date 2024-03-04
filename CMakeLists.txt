@@ -29,7 +29,7 @@ target_include_directories(Chip8 PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 
 # Test executable
-add_executable(testRunner tests/testMain.cpp tests/testChip8.cpp)
+add_executable(testRunner tests/testMain.cpp tests/testChip8.cpp src/Chip8.cpp)
 
 target_include_directories(testRunner PUBLIC "${PROJECT_SOURCE_DIR}/include")
 

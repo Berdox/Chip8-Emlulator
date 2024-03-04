@@ -13,8 +13,14 @@ const unsigned int VIDEO_WIDTH = 64;
 
 class Chip8 {
     public:
+    
+        uint8_t keypad[KEY_COUNT]{};
+        uint32_t video[VIDEO_WIDTH * VIDEO_HEIGHT]{};
+
         // Constructor
         Chip8();
+
+        void Cycles();
 
         //Loads the rom into memory
         void LoadROM(char const*);
@@ -40,12 +46,25 @@ class Chip8 {
         uint8_t sp{};
         uint8_t delayTimer{};
         uint8_t soundTimer{};
-        uint8_t keypad[KEY_COUNT]{};
-        uint32_t video[VIDEO_WIDTH * VIDEO_HEIGHT]{};
         uint16_t opcode;
 
         std::default_random_engine randGen;
         std::uniform_int_distribution<uint8_t> randByte;
+
+        typedef void (Chip8::*Chip8Func)();
+	    Chip8Func table[0xF + 1];
+	    Chip8Func table0[0xE + 1];
+	    Chip8Func table8[0xE + 1];
+	    Chip8Func tableE[0xE + 1];
+	    Chip8Func tableF[0x65 + 1];
+
+    public:
+
+        void Table0();
+	    void Table8();
+	    void TableE();
+	    void TableF();
+
 
         // Does nothing
         void OP_NULL();

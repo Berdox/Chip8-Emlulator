@@ -1,29 +1,40 @@
-cmake_minimum_required(VERSION 3.27.7)
+#cmake_minimum_required(VERSION 3.10)
+#project(Chip8)
 
-project(Chip8_Emulator VERSION 0.1 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.16..3.24)
+project(Chip8 VERSION 0.0.1
+                    LANGUAGES CXX)
 
-#set(CMAKE_CXX_COMPILER gcc)
-# Sets the build to debug
-set(CMAKE_BUILD_TYPE Debug)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Set C++ standard to C++14
+#set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-enable_testing()
-# makes it so gtest is not installed into computer
-set(INSTALL_GTEST OFF)
+# Set source files
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-# Add subdirectories
-add_subdirectory(src)
-#add_subdirectory(libs/googletest)
-add_subdirectory(tests)
+# Set include directories
+#include_directories(SYSTEM "include")
 
-# Add executable target
-add_executable(Chip8_Emulator ${SOURCES})
+# Add libraries
+#add_subdirectory("libs/glad")
+#add_subdirectory(libs/imgui)
+add_subdirectory(libs/googletest)
+#add_subdirectory(libs/SDL2)
 
-target_include_directories(Chip8_Emulator PUBLIC include)
+# Create executable
+add_executable(Chip8 ${SOURCES})
 
-# Include directories
-#include_directories(include)
+target_include_directories(Chip8 PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
+
+# Test executable
+add_executable(testRunner tests/testMain.cpp tests/testChip8.cpp)
+
+target_include_directories(testRunner PUBLIC "${PROJECT_SOURCE_DIR}/include")
+
+target_link_libraries(testRunner gtest_main gmock_main)
+
+# Link libraries
+#target_link_libraries(Chip8 PUBLIC glad)
+# imgui googletesting SDL2

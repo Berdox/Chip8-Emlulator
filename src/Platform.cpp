@@ -1,7 +1,7 @@
-/*#include "../include/Platform.hpp"
-#include <glad/glad.h>
+#include "../include/Platform.hpp"
+#include <glad.h>
 #include <SDL.h>
-#include <SDL2/SDL.h>
+/*#include <SDL2/SDL.h>
 
 
 Platform::Platform(char const* title, int windowWidth, int windowHeight, int textureWidth, int textureHeight)

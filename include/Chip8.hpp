@@ -25,41 +25,6 @@ class Chip8 {
         //Loads the rom into memory
         void LoadROM(char const*);
 
-
-    private:
-        // 16 8-bit registers
-        uint8_t registers[16]{};
-
-        // 4KB of memory
-        uint8_t memory[MEMORY_SIZE]{};
-
-        // 16-bit Address register only holds 12 bit because of memory restriction
-        uint16_t index{};
-
-        // Program counter
-        uint16_t pc{};
-
-        // Stack holds address to return to
-        uint16_t stack[STACK_LEVELS]{};
-
-        // Stack pointer
-        uint8_t sp{};
-        uint8_t delayTimer{};
-        uint8_t soundTimer{};
-        uint16_t opcode;
-
-        std::default_random_engine randGen;
-        std::uniform_int_distribution<uint8_t> randByte;
-
-        typedef void (Chip8::*Chip8Func)();
-	    Chip8Func table[0xF + 1];
-	    Chip8Func table0[0xE + 1];
-	    Chip8Func table8[0xE + 1];
-	    Chip8Func tableE[0xE + 1];
-	    Chip8Func tableF[0x65 + 1];
-
-    public:
-
         void Table0();
 	    void Table8();
 	    void TableE();
@@ -173,5 +138,38 @@ class Chip8 {
 
         // LD Vx, [I] (Read registers V0 through Vx from memory starting at location I)
         void OP_Fx65();
+
+
+    private:
+        // 16 8-bit registers
+        uint8_t registers[16]{};
+
+        // 4KB of memory
+        uint8_t memory[MEMORY_SIZE]{};
+
+        // 16-bit Address register only holds 12 bit because of memory restriction
+        uint16_t index{};
+
+        // Program counter
+        uint16_t pc{};
+
+        // Stack holds address to return to
+        uint16_t stack[STACK_LEVELS]{};
+
+        // Stack pointer
+        uint8_t sp{};
+        uint8_t delayTimer{};
+        uint8_t soundTimer{};
+        uint16_t opcode;
+
+        std::default_random_engine randGen;
+        std::uniform_int_distribution<uint8_t> randByte;
+
+        typedef void (Chip8::*Chip8Func)();
+	    Chip8Func table[0xF + 1];
+	    Chip8Func table0[0xE + 1];
+	    Chip8Func table8[0xE + 1];
+	    Chip8Func tableE[0xE + 1];
+	    Chip8Func tableF[0x65 + 1];
 
 };

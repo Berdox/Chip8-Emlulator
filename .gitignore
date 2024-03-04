@@ -33,5 +33,5 @@
 
 # Directories
 libs/googletest
-build/
+builds/
 .cache/

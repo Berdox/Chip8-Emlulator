@@ -21,10 +21,23 @@ option(SOURCE "Build Source" OFF)
 if(SOURCE) 
     # Set source files
     file(GLOB_RECURSE SOURCES "src/*.cpp")
-    # Create executable
-    add_executable(Chip8 ${SOURCES})
 
-    target_include_directories(Chip8 PUBLIC "${PROJECT_SOURCE_DIR}/include")
+    add_subdirectory(libs/glad)
+        # Add the SDL submodule
+    add_subdirectory(libs/SDL)
+    # Create executable
+    add_executable(Chip8 ${SOURCES} ${GLADSOURCE})
+
+    target_include_directories(Chip8 PUBLIC "${PROJECT_SOURCE_DIR}/include" "libs/glad/include/glad" "libs/glad/include/KHR")
+
+    # Link SDL2 libraries to your executable
+    target_link_libraries(Chip8 SDL2)
+
+    # Include directories for SDL
+    #include_directories(${SDL2_INCLUDE_DIRS})
+
+    # Link SDL libraries
+    #target_link_libraries(your_executable_name ${SDL2_LIBRARIES})
 endif()
 
 if(TESTING)

@@ -1,2 +1,2 @@
+ set(GLADSOURCE "src/glad.c")
  
-include_directories("include/glad")

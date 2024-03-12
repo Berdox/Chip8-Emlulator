@@ -1,12 +1,12 @@
 #include "../include/Chip8.hpp"
-#include "../include/Platform.hpp"
+//#include "../include/Platform.hpp"
 #include <chrono>
 #include <iostream>
-#include <SDL2/SDL.h>
+//#include <SDL2/SDL.h>
 
 
 int main(int argc, char** argv)
-{	/*
+{ /*
 	if (argc != 4)
 	{
 		std::cerr << "Usage: " << argv[0] << " <Scale> <Delay> <ROM>\n";
@@ -44,9 +44,7 @@ int main(int argc, char** argv)
 		}
 	}*/
 
-	SDL_Log("Hello SDL");
-
-	std::cout << "heel\n";
+	std::cout << "hello world \n";
 
 	return 0;
 }

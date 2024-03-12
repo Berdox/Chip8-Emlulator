@@ -31,7 +31,9 @@
 *.out
 *.app
 
-# Directories
-libs/
-build/
-.cache/
+# directories
+
+out/
+.vs/
+.vscode/
+.idea/

@@ -1,0 +1,9 @@
+{
+  "name": "chip8",
+  "version-string": "1",
+  "dependencies": [
+    "imgui", 
+    "glad",
+    "sdl2"
+  ]
+}

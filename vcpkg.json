@@ -2,8 +2,10 @@
   "name": "chip8",
   "version-string": "1",
   "dependencies": [
-    "imgui", 
+    "imgui",
     "glad",
-    "sdl2"
+    "glfw3",
+    "sdl2",
+    "gtest"
   ]
 }

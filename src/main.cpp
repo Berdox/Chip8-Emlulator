@@ -1,13 +1,41 @@
+#include <chrono>
+#include <random>
+#include <cstdint>
+#include <iostream>
+#include <sstream>
 #include "../include/Chip8.hpp"
 //#include "../include/Platform.hpp"
-#include <chrono>
-#include <iostream>
-//#include <SDL2/SDL.h>
 
+void displayRender(const std::array<uint32_t, 64 * 32>& video) {
+	constexpr int WIDTH = 64;
+	constexpr int HEIGHT = 32;
 
-int main(int argc, char** argv)
-{ /*
-	if (argc != 4)
+	std::ostringstream output;
+
+	for (int i = 0; i < WIDTH * HEIGHT; i++) {
+		output << (video[i] != 0 ? "*" : " ");
+
+		// Add a newline after each row
+		if (i % WIDTH == WIDTH - 1) {
+			output << "\n";
+		}
+	}
+
+	// Flush the buffered output to the console
+	std::cout << "\n\n\n\n" << output.str();
+}
+
+int main(int argc, char** argv) {
+	Chip8 chip;
+
+	//if (argc != 1) {
+		chip.LoadROM("D:\\Code\\C++ projects\\Chip8-Emulator\\roms\\IBMLogo.ch8");
+		while (true) {
+			chip.Cycles();
+			displayRender(chip.video);
+		}
+	//}
+	/*if (argc != 4)
 	{
 		std::cerr << "Usage: " << argv[0] << " <Scale> <Delay> <ROM>\n";
 		std::exit(EXIT_FAILURE);
@@ -43,8 +71,8 @@ int main(int argc, char** argv)
 			platform.Update(chip8.video, videoPitch);
 		}
 	}*/
-
-	std::cout << "hello world \n";
+	//uint8_t randByte = static_cast<uint8_t>(std::uniform_int_distribution<unsigned int>(0, 255U));
+	//SDL_Log("SDL initialized successfully!");
 
 	return 0;
 }

@@ -4,11 +4,10 @@
 #include <fstream>
 #include <chrono>
 #include <random>
+#include <iostream>
 
 const unsigned int START_ADDRESS = 0x200;
-
 const unsigned int FONTSET_SIZE = 80;
-
 const unsigned int FONTSET_START_ADDRESS = 0x50;
 
 uint8_t fontset[FONTSET_SIZE] =
@@ -33,16 +32,21 @@ uint8_t fontset[FONTSET_SIZE] =
 
 Chip8::Chip8() {
 
+
+    // Initalizes the PC
     pc = START_ADDRESS;
 
+    // Loads the fonts into memory
     for(unsigned int i = 0; i < FONTSET_SIZE; ++i) {
         memory[FONTSET_START_ADDRESS + i] = fontset[i];
     }
 
+    // Sets the seed for random generation
     randGen.seed(std::chrono::system_clock::now().time_since_epoch().count());
 
     // Initialize RNG
-	randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
+    // Not perfect wish it could be uint8_t just to be safe
+    randByte = std::uniform_int_distribution<unsigned long>(0, 255U);
 
     // Set up function pointer table
 	table[0x0] = &Chip8::Table0;
@@ -103,6 +107,91 @@ Chip8::Chip8() {
 
 }
 
+// Template function definition
+template <typename T, std::size_t N>
+void Chip8::SetMemory(std::array<T, N> buffer) {
+    // Ensure that T is uint8_t
+    static_assert(std::is_same<T, uint8_t>::value, "Array must be of type uint8_t");
+
+    // Check the size of the provided buffer against the Chip8 memory size
+    if (buffer.size() < memory.size()) {
+        std::copy(buffer.begin(), buffer.end(), memory.begin());
+    }
+    else {
+        std::cerr << "Buffer size exceeds Chip8 memory size." << std::endl;
+    }
+}
+
+// Explicit template instantiation
+template void Chip8::SetMemory<uint8_t, 4096>(std::array<uint8_t, 4096> buffer);
+
+std::array<uint8_t, MEMORY_SIZE> Chip8::GetMemory() {
+    return memory;
+}
+
+void Chip8::setIndex(uint16_t newIndex) {
+    index = newIndex;
+}
+
+uint16_t Chip8::getIndex() {
+    return index;
+}
+
+void Chip8::setPC(uint16_t newPC) {
+    pc = newPC;
+}
+
+uint16_t Chip8::getPC() {
+    return pc;
+}
+
+void Chip8::SetStack(uint16_t newStack[]) {
+    for (int i = 0; i < STACK_LEVELS; i++) {
+        stack[i] = newStack[i];
+    }
+}
+
+std::unique_ptr<uint16_t[]> Chip8::GetStack() {
+    // Dynamically allocate a new array and copy values from the existing stack
+    auto uniqueStack = std::make_unique<uint16_t[]>(16);
+    for (size_t i = 0; i < 16; ++i) {
+        uniqueStack[i] = stack[i]; // Copy each element
+    }
+    return uniqueStack; // Return the unique pointer
+}
+
+void Chip8::setSP(uint8_t newSP) {
+    sp = newSP;
+}
+
+uint8_t Chip8::getSP() {
+    return sp;
+}
+
+void Chip8::setDelayTimer(uint8_t newDelayTimer) {
+    delayTimer = newDelayTimer;
+}
+
+uint8_t Chip8::getDelayTimer() {
+    return delayTimer;
+}
+
+void Chip8::setSoundTimer(uint8_t newSoundTimer) {
+    soundTimer = newSoundTimer;
+}
+
+uint8_t Chip8::getSoundTimer() {
+    return soundTimer;
+}
+
+void Chip8::setOPCODE(uint16_t newOPCODE) {
+    opcode = newOPCODE;
+}
+
+uint16_t Chip8::getOPCODE() {
+    return opcode;
+}
+
 void Chip8::Table0() {
 		((*this).*(table0[opcode & 0x000Fu]))();
 }
@@ -121,10 +210,14 @@ void Chip8::TableF() {
 
 
 void Chip8::Cycles() {
-    opcode = (memory[pc] << 8u) | memory[pc +1];
 
+    // Fetches the opicode from memory
+    opcode = (memory[pc] << 8u) | memory[pc + 1];
+
+    // Increment the PC to next instruction
     pc +=2;
 
+    // Decode and Execute opicode
     ((*this).*(table[(opcode & 0xF000u) >> 12u]))();
 
     if(delayTimer > 0) {
@@ -140,26 +233,29 @@ void Chip8::LoadROM(char const* filename) {
 
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
 
-    if(file.is_open()) {
-
-        // Open the file as a stream of binary and move the file pointer to the end
-        std::streampos size = file.tellg();
-        char* buffer = new char[size];
-
-        // Go back to the beginning of the file and fill the buffer
-        file.seekg(0, std::ios::beg);
-        file.read(buffer, size);
-        file.close();
-
-        // Load the ROM contents into the Chip8's memory, starting at 0x200
-        for(long i = 0; i < size; i++) {
-            memory[START_ADDRESS + i] = buffer[i];
-        }
-
-        // Free the buffer
-        delete[] buffer;
+    if (!file.is_open()) {
+        std::cerr << "Failed to open ROM file: " << filename << '\n';
+        return;
     }
+
+    std::streampos size = file.tellg();
+    if (size > (MEMORY_SIZE - START_ADDRESS)) {
+        std::cerr << "ROM file is too large to fit in memory.\n";
+        return;
+    }
+
+    // Allocate a buffer to hold the ROM data
+    std::vector<uint8_t> buffer(static_cast<size_t>(size));
+
+    // Read the file into the buffer
+    file.seekg(0, std::ios::beg);
+    file.read(reinterpret_cast<char*>(buffer.data()), size);
+    file.close();
+
+    // Load the ROM data into the Chip8 memory starting at START_ADDRESS
+    std::copy(buffer.begin(), buffer.end(), memory.begin() + START_ADDRESS);
 }
+
 
 // Does nothing
 void Chip8::OP_NULL(){
@@ -168,7 +264,8 @@ void Chip8::OP_NULL(){
 
 // CLS (Clear display)
 void Chip8::OP_00E0(){
-    std::memset(video, 0, sizeof(video));
+    //std::memset(video, 0, sizeof(video));
+    video.fill(0);
 }
 
 // RET (return from subroutine)
@@ -184,14 +281,14 @@ void Chip8::OP_0nnn(){
 
 // JP (jump to location nnn)
 void Chip8::OP_1nnn(){
-    uint16_t address = opcode * 0x0FFFu;
+    uint16_t address = opcode & 0x0FFFu;
 
     pc = address;
 } 
 
 // CALL addr (call subroutine at nnn)
 void Chip8::OP_2nnn(){
-    uint16_t address = opcode * 0x0FFFu;
+    uint16_t address = opcode & 0x0FFFu;
     stack[sp] = pc;
     ++sp;
     pc = address;
@@ -352,16 +449,16 @@ void Chip8::OP_9xy0(){
 void Chip8::OP_Annn(){
 
     // Makes sure it is unsigned 16-bits
-    uint16_t address = opcode * 0x0FFFu;
+    uint16_t address = opcode & 0x0FFFu;
     
     index = address;
 }
 
 // JP V0, addr (Jump to location nnn + V0)
 void Chip8::OP_Bnnn(){
-    uint16_t address = (opcode * 0x0FFFu) + registers[0x00u];
+    uint16_t address = opcode & 0x0FFFu;
 
-    pc = address;
+    pc = registers[0] + address;
 }
 
 // RND Vx, byte (Set Vx = random byte AND kk)
@@ -369,37 +466,41 @@ void Chip8::OP_Cxkk(){
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     uint8_t byte = opcode & 0x00FFu;
 
-    registers[Vx] = randByte(randGen) & byte;
+    registers[Vx] = static_cast<uint8_t>(randByte(randGen)) & byte;
 }
 
 // DRW Vx, Vy, nibble (Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision)
-void Chip8::OP_Dxyn(){
+void Chip8::OP_Dxyn() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     uint8_t Vy = (opcode & 0x00F0u) >> 4u;
     uint8_t height = opcode & 0x000Fu;
 
-    uint8_t xPos = registers[Vx] & VIDEO_WIDTH;
-    uint8_t yPos = registers[Vy] & VIDEO_HEIGHT;
+    uint8_t xPos = registers[Vx] % VIDEO_WIDTH;
+    uint8_t yPos = registers[Vy] % VIDEO_HEIGHT;
 
     registers[0xF] = 0;
-    for(unsigned int row = 0; row < height; ++row) {
-
+    for (unsigned int row = 0; row < height; ++row) {
         uint8_t spriteByte = memory[index + row];
 
-        for(unsigned int col = 0; col < 8; ++col) {
+        for (unsigned int col = 0; col < 8; ++col) {
             uint8_t spritePixel = spriteByte & (0x80u >> col);
-            uint32_t* screenPixel = &video[(yPos + row) * VIDEO_WIDTH + (xPos + col)];
 
-            if(spritePixel) {
-                if(*screenPixel == 0xFFFFFFFF) {
-                    registers[0xF] = 1;
+            // Ensure the pixel coordinates are within screen bounds
+            if ((xPos + col) < VIDEO_WIDTH && (yPos + row) < VIDEO_HEIGHT) {
+                uint32_t* screenPixel = &video[(yPos + row) * VIDEO_WIDTH + (xPos + col)];
+
+                if (spritePixel) {
+                    if (*screenPixel == 0x00000000) {  // Collision
+                        registers[0xF] = 1;
+                    }
+
+                    *screenPixel ^= 0xFFFFFFFF;  // XOR to draw sprite
                 }
-
-                *screenPixel ^= 0xFFFFFFFF;
             }
         }
     }
 }
+
 
 // SKP Vx (Skip next instruction if key with the value of Vx is pressed)
 void Chip8::OP_Ex9E(){

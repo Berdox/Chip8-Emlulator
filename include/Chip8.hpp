@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <random>
+#include <array>
 
 const unsigned int KEY_COUNT = 16;
 const unsigned int MEMORY_SIZE = 4096;
@@ -15,16 +16,48 @@ class Chip8 {
     public:
     
         uint8_t keypad[KEY_COUNT]{};
-        uint32_t video[VIDEO_WIDTH * VIDEO_HEIGHT]{};
+        std::array<uint32_t, VIDEO_WIDTH * VIDEO_HEIGHT> video;
+        //uint32_t video[VIDEO_WIDTH * VIDEO_HEIGHT]{};
 
         // Constructor
         Chip8();
 
+        // Setters and Getters
+
+        template <typename T, std::size_t N>
+        void SetMemory(std::array<T, N> buffer);
+
+        std::array<uint8_t, MEMORY_SIZE> GetMemory();
+
+        void setIndex(uint16_t);
+        uint16_t getIndex();
+
+        void setPC(uint16_t);
+        uint16_t getPC();
+
+        void SetStack(uint16_t[]);
+
+        std::unique_ptr<uint16_t[]> GetStack();
+
+        void setSP(uint8_t);
+        uint8_t getSP();
+
+        void setDelayTimer(uint8_t);
+        uint8_t getDelayTimer();
+
+        void setSoundTimer(uint8_t);
+        uint8_t getSoundTimer();
+
+        void setOPCODE(uint16_t);
+        uint16_t getOPCODE();
+
+        // Main Loop
         void Cycles();
 
         //Loads the rom into memory
         void LoadROM(char const*);
 
+        // Function Pointer Table
         void Table0();
 	    void Table8();
 	    void TableE();
@@ -145,7 +178,7 @@ class Chip8 {
         uint8_t registers[16]{};
 
         // 4KB of memory
-        uint8_t memory[MEMORY_SIZE]{};
+        std::array<uint8_t, MEMORY_SIZE> memory;
 
         // 16-bit Address register only holds 12 bit because of memory restriction
         uint16_t index{};
@@ -163,7 +196,7 @@ class Chip8 {
         uint16_t opcode;
 
         std::default_random_engine randGen;
-        std::uniform_int_distribution<uint8_t> randByte;
+        std::uniform_int_distribution<unsigned long> randByte;
 
         typedef void (Chip8::*Chip8Func)();
 	    Chip8Func table[0xF + 1];

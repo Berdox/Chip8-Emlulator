@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include "../include/Chip8.hpp"
-//#include "../include/Platform.hpp"
+#include "../include/Platform.hpp"
 
 void displayRender(const std::array<uint32_t, 64 * 32>& video) {
 	constexpr int WIDTH = 64;
@@ -26,14 +26,12 @@ void displayRender(const std::array<uint32_t, 64 * 32>& video) {
 }
 
 int main(int argc, char** argv) {
-	Chip8 chip;
+	//Chip8 chip;
 
-	//if (argc != 1) {
-		chip.LoadROM("D:\\Code\\C++ projects\\Chip8-Emulator\\roms\\IBMLogo.ch8");
-		while (true) {
-			chip.Cycles();
-			displayRender(chip.video);
-		}
+	//chip.LoadROM("D:\\Code\\C++ projects\\Chip8-Emulator\\roms\\IBMLogo.ch8");
+	//while (true) {
+	//	chip.Cycles();
+	//	displayRender(chip.video);
 	//}
 	/*if (argc != 4)
 	{
@@ -71,9 +69,13 @@ int main(int argc, char** argv) {
 			platform.Update(chip8.video, videoPitch);
 		}
 	}*/
-	//uint8_t randByte = static_cast<uint8_t>(std::uniform_int_distribution<unsigned int>(0, 255U));
 	//SDL_Log("SDL initialized successfully!");
 
+
+    // Main render loop
+	Chip8 chip;
+	Platform plat("title", 1920, 1080, &chip);
+	plat.mainLoop();
 	return 0;
 }
 

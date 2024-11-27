@@ -11,62 +11,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project ("Chip8")
 
-#[==[
-# Define a testing option
-option(TESTING "Enable testing" OFF)
-
-
-if(TESTING)
-    # Enable testing
-    enable_testing()
-    message(STATUS "Testing enabled.")
-
-        # Add source files to the executable
-    add_executable(Chip8 
-        "src/main.cpp"
-        "src/Chip8.cpp"
-        "src/Platform.cpp"
-        "include/Chip8.hpp"
-        "include/Platform.hpp"
-        "tests/testChip8.cpp"
-        "tests/testMain.cpp"
-    )
-
-    # Find required packages
-    find_package(imgui CONFIG REQUIRED)
-    find_package(sdl2 CONFIG REQUIRED)
-    find_package(glad CONFIG REQUIRED)
-    find_package(GTest CONFIG REQUIRED)
-
-    # Link libraries to the executable
-    target_link_libraries(Chip8 PRIVATE imgui::imgui glad::glad GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
-
-else()
-    message(STATUS "Building Chip8 without testing.")
-
-    # Add source files to the executable
-    add_executable(Chip8 
-        "src/main.cpp"
-        "src/Chip8.cpp"
-        "src/Platform.cpp"
-        "include/Chip8.hpp"
-        "include/Platform.hpp"
-    )
-
-    # Find required packages
-    find_package(imgui CONFIG REQUIRED)
-    find_package(sdl2 CONFIG REQUIRED)
-    find_package(glad CONFIG REQUIRED)
-    find_package(glfw3 CONFIG REQUIRED)
-
-    # Link libraries to the executable
-    target_link_libraries(Chip8 PRIVATE imgui::imgui glad::glad SDL2::SDL2main SDL2::SDL2 glfw)
-
-    # Add include directories
-    target_include_directories(Chip8 PRIVATE include)
-endif()
-]==]
-
 cmake_minimum_required(VERSION 3.14)
 project(Chip8)
 
@@ -76,10 +20,17 @@ option(TESTING "Enable testing" OFF)
 # Common source files
 set(SOURCES
     "src/Chip8.cpp"
-    #"src/Platform.cpp"
+    "src/Platform.cpp"
     "include/Chip8.hpp"
-    #"include/Platform.hpp"
+    "include/Platform.hpp" 
 )
+
+set(SHADERS
+    "src/Shaders/v_shader.glsl"
+    "src/Shaders/f_shader.glsl"
+)
+
+file(COPY ${SHADERS} DESTINATION ${CMAKE_BINARY_DIR}/src/Shaders/)
 
 # Add tests if testing is enabled
 if(TESTING)
@@ -108,9 +59,10 @@ find_package(imgui CONFIG REQUIRED)
 find_package(sdl2 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 # Link common libraries
-target_link_libraries(Chip8 PRIVATE imgui::imgui glad::glad)
+target_link_libraries(Chip8 PRIVATE imgui::imgui glad::glad glm::glm)
 
 if(TESTING)
     target_link_libraries(Chip8 PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)

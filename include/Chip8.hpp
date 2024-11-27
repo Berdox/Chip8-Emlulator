@@ -24,6 +24,10 @@ class Chip8 {
 
         // Setters and Getters
 
+        void SetRegisters(uint8_t[]);
+        
+        std::unique_ptr<uint16_t[]> getRegisters();
+
         template <typename T, std::size_t N>
         void SetMemory(std::array<T, N> buffer);
 
@@ -175,7 +179,7 @@ class Chip8 {
 
     private:
         // 16 8-bit registers
-        uint8_t registers[16]{};
+        uint8_t registers[REGISTER_COUNT]{};
 
         // 4KB of memory
         std::array<uint8_t, MEMORY_SIZE> memory;

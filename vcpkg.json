@@ -2,10 +2,18 @@
   "name": "chip8",
   "version-string": "1",
   "dependencies": [
-    "imgui",
+    {
+      "name": "imgui",
+      "features": [
+        "glfw-binding",
+        "opengl3-binding",
+        "docking-experimental"
+      ]
+    },
     "glad",
     "glfw3",
     "sdl2",
+    "glm",
     "gtest"
   ]
 }

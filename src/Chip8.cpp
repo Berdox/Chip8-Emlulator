@@ -107,6 +107,23 @@ Chip8::Chip8() {
 
 }
 
+
+void Chip8::SetRegisters(uint8_t newRegisters[]) {
+    for (int i = 0; i < REGISTER_COUNT; i++) {
+        registers[i] = newRegisters[i];
+    }
+}
+
+std::unique_ptr<uint16_t[]> Chip8::getRegisters() {
+    // Dynamically allocate a new array and copy values from the existing stack
+    auto uniqueRegisters = std::make_unique<uint16_t[]>(16);
+    for (size_t i = 0; i < 16; ++i) {
+        uniqueRegisters[i] = registers[i]; // Copy each element
+    }
+    return uniqueRegisters; // Return the unique pointer
+}
+
+
 // Template function definition
 template <typename T, std::size_t N>
 void Chip8::SetMemory(std::array<T, N> buffer) {
